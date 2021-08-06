@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ParkyAPI.Repository
 {
-    public class NationalParkRepository : INationalParkRepository
+    public class NationalParkRepository: INationalParkRepository
     {
         private readonly ApplicationDbContext _db;
 
