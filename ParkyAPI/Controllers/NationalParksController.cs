@@ -11,7 +11,8 @@ using System.Threading.Tasks;
 
 namespace ParkyAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v{version:apiVersion}/nationalparks")]
+    //[ApiExplorerSettings(GroupName = "ParkyOpenAPISpecNP")]
     [ApiController]
 
     public class NationalParksController : ControllerBase
@@ -65,7 +66,7 @@ namespace ParkyAPI.Controllers
             }
         }
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(NationalParkDto))]
+        [ProducesResponseType(StatusCodes.Status201Created , Type = typeof(NationalParkDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -86,7 +87,8 @@ namespace ParkyAPI.Controllers
                 ModelState.AddModelError("", $"Something went wrong when saving the record { nationalParkObj.Name}");
                 return StatusCode(500, ModelState);
             }
-            return CreatedAtRoute("GetNationalPark", new { nationalParkId = nationalParkObj.Id}, nationalParkObj);
+            return CreatedAtRoute("GetNationalPark", new { version=HttpContext.GetRequestedApiVersion().ToString(),
+                                                        nationalParkId = nationalParkObj.Id}, nationalParkObj);
 
         }
         [HttpPatch("{nationalParkId:int}", Name = "UpdateNationalPark")]

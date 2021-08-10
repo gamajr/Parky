@@ -10,8 +10,9 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace ParkyAPI.Controllers
-{
-    [Route("api/Trails")]
+{    
+    [Route("api/v{version:apiVersion}/trails")]
+    //[ApiExplorerSettings(GroupName = "ParkyOpenAPISpecTrails")]
     [ApiController]
 
     public class TrailsController : ControllerBase
@@ -28,7 +29,8 @@ namespace ParkyAPI.Controllers
         /// Get list of National Parks
         /// </summary>
         /// <returns></returns>
-        [HttpGet]
+        /// 
+        [HttpGet(Name = "GetTrails")]
         [ProducesResponseType(StatusCodes.Status200OK, Type= typeof(List<TrailDto>))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult GetTrails()
@@ -41,6 +43,25 @@ namespace ParkyAPI.Controllers
             }
             return Ok(objDto);
         }
+        [HttpGet("GetTrailsInNationalPark/{nationalParkId:int}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<TrailDto>))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult GetTrailsInNationalPark(int nationalParkId)
+        {
+            var objList = _trailRepo.GetTrailsInNationalPark(nationalParkId);
+            if (objList == null)
+            {
+                return NotFound();
+            }
+            var objDto = new List<TrailDto>();
+            foreach (var obj in objList)
+            {
+                objDto.Add(_mapper.Map<TrailDto>(obj));
+            }
+            return Ok(objDto);
+        }
+
         /// <summary>
         /// Get individual Trail
         /// </summary>
@@ -65,11 +86,11 @@ namespace ParkyAPI.Controllers
             }
         }
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TrailDto))]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(TrailDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public IActionResult CreateTrail([FromBody] TrailDto trailDto)
+        public IActionResult CreateTrail([FromBody] TrailCreateDto trailDto)
         {
             if (trailDto == null)
             {
@@ -94,7 +115,7 @@ namespace ParkyAPI.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public IActionResult UpdateTrail(int trailId, [FromBody] TrailDto trailDto)
+        public IActionResult UpdateTrail(int trailId, [FromBody] TrailUpdateDto trailDto)
         {
             if (trailDto == null|| trailId!=trailDto.Id)
             {
