@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ParkyAPI.Models;
@@ -67,9 +68,11 @@ namespace ParkyAPI.Controllers
         /// </summary>
         /// <param name="trailId">The Id of the Trail</param>
         /// <returns></returns>
+        [Authorize(Roles="Admin")]
         [HttpGet("{trailId:int}", Name ="GetTrail")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TrailDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesDefaultResponseType]
         public IActionResult GetTrail(int trailId)
