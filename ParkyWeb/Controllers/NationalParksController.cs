@@ -11,8 +11,10 @@ using System.Threading.Tasks;
 
 namespace ParkyWeb.Controllers
 {
+    [Authorize]
     public class NationalParksController : Controller
     {
+
         private readonly INationalParkRepository _npRepo;
         public NationalParksController(INationalParkRepository npRepo)
         {
@@ -25,7 +27,8 @@ namespace ParkyWeb.Controllers
         public async Task<IActionResult> GetAll()
         {
             return Json(new { data = await _npRepo.GetAllAsync(SD.NationalParkAPIPath, HttpContext.Session.GetString("JWToken"))});
-        }        
+        }
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Upsert(int? id)
         {
             NationalPark obj = new NationalPark();
@@ -46,6 +49,7 @@ namespace ParkyWeb.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Upsert(NationalPark obj)
         {
             if (ModelState.IsValid)
@@ -86,6 +90,7 @@ namespace ParkyWeb.Controllers
 
         }
         [HttpDelete]
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             var status = await _npRepo.DeleteAsync(SD.NationalParkAPIPath, id, HttpContext.Session.GetString("JWToken"));

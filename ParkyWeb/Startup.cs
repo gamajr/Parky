@@ -75,11 +75,10 @@ namespace ParkyWeb
             AllowAnyHeader().
             AllowAnyOrigin().
             AllowAnyMethod());
-       
 
+            app.UseAuthentication(); //Authentication always go BEFORE Authorization
             app.UseAuthorization();
-            app.UseAuthentication();
-
+            
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(

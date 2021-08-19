@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ParkyWeb.Models;
@@ -12,8 +13,10 @@ using System.Threading.Tasks;
 
 namespace ParkyWeb.Controllers
 {
+    [Authorize]
     public class TrailsController : Controller
     {
+        
         private readonly INationalParkRepository _npRepo;
         private readonly ITrailRepository _trailRepo;
         public TrailsController(INationalParkRepository npRepo, ITrailRepository trailRepo)
@@ -29,6 +32,7 @@ namespace ParkyWeb.Controllers
         {
             return Json(new { data = await _trailRepo.GetAllAsync(SD.TrailAPIPath, HttpContext.Session.GetString("JWToken")) });
         }
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Upsert(int? id)
         {            
            
@@ -61,6 +65,7 @@ namespace ParkyWeb.Controllers
             }
 
         }
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Upsert(TrailVM obj)
@@ -95,6 +100,7 @@ namespace ParkyWeb.Controllers
             }
 
         }
+        [Authorize(Roles = "Admin")]
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
@@ -110,4 +116,3 @@ namespace ParkyWeb.Controllers
         }
     }   
 }
-
